@@ -4,7 +4,7 @@ export const AUTHENT_HEADER = "Authentication";
 export const BEARER = "Bearer ";
 
 export interface User {
-    user_id: number;
+    user_id?: number;
     username: string;
     email?: string;
     password: string;
