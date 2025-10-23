@@ -19,6 +19,18 @@ export interface Session {
     externalId: string;
 }
 
+export interface UserPublic {
+    user_id: string
+    username: string
+    last_login: string
+}
+
+export interface Message {
+    id: string;
+    senderId: string; // correspond à user_id de l'émetteur
+    content: string;
+    timestamp: string;
+}
 
 export interface EmptyCallback {
     (): void;
@@ -32,4 +44,3 @@ export interface SessionCallback {
 export interface ErrorCallback {
     (error: CustomError): void;
 }
-

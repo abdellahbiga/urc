@@ -1,15 +1,18 @@
+// src/pages/ChatPage.tsx
 import React from 'react'
-import { useSessionStore } from '../store/useSessionStore'
+import { Box } from '@mui/material'
+import ChatSidebar from '../components/chat/ChatSidebar'
+import ChatMessages from '../components/chat/ChatMessages'
+import ChatInput from '../components/chat/ChatInput'
 
-function ChatPage() {
-    const session = useSessionStore((state) => state.session)
-
+export default function ChatPage() {
     return (
-        <div style={{ padding: 20 }}>
-            <h1>Bienvenue sur la messagerie 👋</h1>
-            <p>Connecté en tant que : <strong>{session?.username}</strong></p>
-        </div>
+        <Box sx={{ display: 'flex', height: '100vh' }}>
+            <ChatSidebar />
+            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <ChatMessages />
+                <ChatInput />
+            </Box>
+        </Box>
     )
 }
-
-export default ChatPage

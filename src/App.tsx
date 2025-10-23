@@ -30,6 +30,14 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
+                    <Route
+                        path="/messages/user/:userId"
+                        element={
+                            <ProtectedRoute>
+                                <ChatPage />
+                            </ProtectedRoute>
+                        }
+                    />
                     <Route path="*" element={<Navigate to="/login" replace />} />
                 </Routes>
             </BrowserRouter>
