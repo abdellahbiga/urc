@@ -7,45 +7,68 @@ import {
     Typography,
     Divider,
     Box,
+    Button,
 } from '@mui/material'
 import { useChatStore } from '../../store/useChatStore'
 import { useSessionStore } from '../../store/useSessionStore'
 import { getUsers } from '../../user/userApi'
-import { useNavigate, useParams } from 'react-router-dom'
-import {UserPublic} from "../../model/common";
+import { useNavigate } from 'react-router-dom'
+import { UserPublic } from '../../model/common'
+import { getRooms } from '../../room/roomApi'
 
 export default function ChatSidebar() {
-    const { users, selectedUser, setUsers, setSelectedUser } = useChatStore()
+    const {
+        users, setUsers, selectedUser, setSelectedUser,
+        selectedRoom, setSelectedRoom
+    } = useChatStore()
+
+    const [rooms, setRooms] = React.useState<any[]>([])
     const session = useSessionStore((state) => state.session)
     const navigate = useNavigate()
-    const { userId } = useParams()
 
-    // Charger la liste des utilisateurs
+    // Charger les users
     useEffect(() => {
+        if (!session?.token) return // ⛔ attend que le token soit prêt
         async function fetchUsers() {
             try {
                 const data = await getUsers()
-                const filtered = data.filter((u) => u.username !== session?.username)
-                setUsers(filtered)
-            } catch (error) {
-                console.error('Erreur récupération utilisateurs:', error)
+                setUsers(data)
+            } catch (err) {
+                console.error('Erreur récupération users:', err)
             }
         }
         fetchUsers()
-    }, [session, setUsers])
+    }, [session?.token, setUsers])
 
-    // Synchroniser la sélection avec l'URL
+    // Charger les rooms
     useEffect(() => {
-        if (userId && users.length > 0) {
-            const found = users.find((u) => u.user_id === userId)
-            if (found) setSelectedUser(found)
+        if (!session?.token) return // ⛔ attend que le token soit prêt
+        async function fetchRooms() {
+            try {
+                const data = await getRooms()
+                setRooms(data)
+            } catch (err) {
+                console.error('Erreur récupération rooms:', err)
+            }
         }
-    }, [userId, users, setSelectedUser])
+        fetchRooms()
+    }, [session?.token])
 
-    // Clic sur un utilisateur
-    const handleSelect = (user: UserPublic) => {
-        setSelectedUser(user); // ⚡️ mettre à jour le store tout de suite
-        navigate(`/messages/user/${user.user_id}`);
+    const handleSelectUser = (user: UserPublic) => {
+        setSelectedUser(user)
+        setSelectedRoom(null)
+        navigate(`/messages/user/${user.user_id}`)
+    }
+
+    const handleSelectRoom = (room: any) => {
+        setSelectedRoom(room.name)
+        setSelectedUser(null)
+        navigate(`/messages/room/${room.room_id}`)
+    }
+
+    const handleLogout = () => {
+        sessionStorage.clear()
+        navigate('/login')
     }
 
     return (
@@ -54,27 +77,52 @@ export default function ChatSidebar() {
                 width: 250,
                 borderRight: '1px solid #ddd',
                 height: '100vh',
-                overflowY: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
             }}
         >
-            <Typography variant="h6" align="center" sx={{ my: 2 }}>
-                Utilisateurs
-            </Typography>
-            <Divider />
-            <List>
-                {users.map((user) => (
-                    <ListItemButton
-                        key={user.user_id}
-                        selected={selectedUser?.user_id === user.user_id}
-                        onClick={() => handleSelect(user)} // on passe l'utilisateur entier
-                    >
-                        <ListItemText
-                            primary={user.username}
-                            secondary={`Dernière connexion : ${user.last_login}`}
-                        />
-                    </ListItemButton>
-                ))}
-            </List>
+            <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
+                <Typography variant="h6" align="center" sx={{ my: 1 }}>
+                    Utilisateurs
+                </Typography>
+                <Divider />
+                <List>
+                    {users.filter((users) => Number(users.user_id) !== session?.id).map((user) => (
+                        <ListItemButton
+                            key={user.user_id}
+                            selected={selectedUser?.user_id === user.user_id}
+                            onClick={() => handleSelectUser(user)}
+                        >
+                            <ListItemText
+                                primary={user.username}
+                                secondary={`Dernière connexion : ${user.last_login}`}
+                            />
+                        </ListItemButton>
+                    ))}
+                </List>
+
+                <Typography variant="h6" align="center" sx={{ my: 1 }}>
+                    Salons
+                </Typography>
+                <Divider />
+                <List>
+                    {rooms.map((room) => (
+                        <ListItemButton
+                            key={room.room_id}
+                            selected={selectedRoom === room.name}
+                            onClick={() => handleSelectRoom(room)}
+                        >
+                            <ListItemText primary={room.name} />
+                        </ListItemButton>
+                    ))}
+                </List>
+            </Box>
+
+            <Box sx={{ p: 2, borderTop: '1px solid #ddd' }}>
+                <Button variant="outlined" color="error" fullWidth onClick={handleLogout}>
+                    Déconnexion
+                </Button>
+            </Box>
         </Box>
     )
 }

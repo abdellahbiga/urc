@@ -10,7 +10,7 @@ export default function UserList() {
     const navigate = useNavigate()
     const { userId } = useParams()
     const { session } = useSessionStore()
-    const { users, setUsers, selectedUser, selectUser } = useChatStore()
+    const { users, setUsers, selectedUser, setSelectedUser } = useChatStore()
 
     useEffect(() => {
         getUsers()
@@ -22,14 +22,14 @@ export default function UserList() {
     }, [session])
 
     const handleSelect = (user: any) => {
-        selectUser(user)
+        setSelectedUser(user)
         navigate(`/messages/user/${user.user_id}`)
     }
 
     useEffect(() => {
         if (userId && users.length > 0) {
             const found = users.find((u) => String(u.user_id) === userId)
-            if (found) selectUser(found)
+            if (found) setSelectedUser(found)
         }
     }, [userId, users])
 

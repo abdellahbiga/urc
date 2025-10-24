@@ -1,6 +1,6 @@
 import {CustomError} from "./CustomError";
 
-export const AUTHENT_HEADER = "Authentication";
+export const AUTHENT_HEADER = "Authorization";
 export const BEARER = "Bearer ";
 
 export interface User {
@@ -30,6 +30,13 @@ export interface Message {
     senderId: string; // correspond à user_id de l'émetteur
     content: string;
     timestamp: string;
+}
+
+export interface Room {
+    room_id: string
+    name: string
+    created_on: string
+    created_by?: number
 }
 
 export interface EmptyCallback {
