@@ -1,9 +1,9 @@
-// src/pages/api/message.js
+// /api/message.js
 import { checkSession } from '../lib/session';
 import { Redis } from '@upstash/redis';
 
 export const config = {
-    runtime: 'nodejs18.x', // Utilisation de Node.js pour les Serverless Functions
+    runtime: 'nodejs', // Utilisation de Node.js pour les Serverless Functions
 };
 
 const redis = new Redis({

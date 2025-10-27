@@ -1,3 +1,4 @@
+// /api/messages/[userId].js
 import { checkSession } from '/home/abigagane/dosi/tp_react/urc/lib/session.js';
 import { Redis } from '@upstash/redis';
 import crypto from 'crypto';

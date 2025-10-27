@@ -1,3 +1,4 @@
+// /api/users.js
 import { sql } from "@vercel/postgres";
 import {checkSession, unauthorizedResponse} from "../lib/session";
 
