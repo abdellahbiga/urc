@@ -1,5 +1,5 @@
 // /api/rooms/[roomId].js
-import { checkSession } from '/home/abigagane/dosi/tp_react/urc/lib/session.js';
+import { checkSession } from '../../lib/session';
 import { Redis } from '@upstash/redis';
 
 export const config = {
